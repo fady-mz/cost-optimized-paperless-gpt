@@ -1,0 +1,63 @@
+{
+  "acceptedLiveOutcomes": null,
+  "applicationCalls": 5,
+  "arm": "baseline",
+  "calls": [
+    {
+      "prompt": "I will provide you with the content of a document that has been partially read by OCR (so it may contain errors).\nYour task is to find a suitable document title that I can use as the title in the paperless-ngx program.\nIf the original title is already adding value and not just a technical filename you can use it as extra information to enhance your suggestion.\nRespond only with the title, without any additional information. The content is likely in English.\n\nThe data will be provided using an XML-like format for clarity:\n\n\u003coriginal_title\u003eOriginal synthetic invoice\u003c/original_title\u003e\n\u003ccontent\u003e\nSYNTHETIC-DOC-001. Vendor issued invoice SYN-001 on 2026-09-01 for 42.00 USD. This is synthetic benchmark data, not a real customer document.\n\u003c/content\u003e\n",
+      "response": "Generated synthetic invoice"
+    },
+    {
+      "prompt": "I will provide you with the content and the title of a document.\nYour task is to select appropriate tags for the document from the list of available tags I will provide.\nOnly select tags from the provided list.\nRespond only with the selected tags as a comma-separated list, without any additional information.\nThe content is likely in English.\n\nThe data will be provided using an XML-like format for clarity:\n\n\u003cavailable_tags\u003e\ninvoice, unrelated\n\u003c/available_tags\u003e\n\n\u003ctitle\u003e\nGenerated synthetic invoice\n\u003c/title\u003e\n\n\u003ccontent\u003e\nSYNTHETIC-DOC-001. Vendor issued invoice SYN-001 on 2026-09-01 for 42.00 USD. This is synthetic benchmark data, not a real customer document.\n\u003c/content\u003e\n\nPlease concisely select the English tags from the list above that best describe the document.\nBe very selective and only choose the most relevant tags since too many tags will make the document less discoverable.\n",
+      "response": "invoice"
+    },
+    {
+      "prompt": "I will provide you with the content of a document. Your task is to suggest a correspondent that is most relevant to the document.\n\nCorrespondents are the senders of documents that reach you. In the other direction, correspondents are the recipients of documents that you send.\nIn Paperless-ngx we can imagine correspondents as virtual drawers in which all documents of a person or company are stored.\nWith just one click, we can find all the documents assigned to a specific correspondent.\nTry to suggest a correspondent, either from the example list or come up with a new correspondent.\n\nRespond only with a correspondent, without any additional information!\n\nBe sure to choose a correspondent that is most relevant to the document.\nTry to avoid any legal or financial suffixes like \"GmbH\" or \"AG\" in the correspondent name.\nFor example use \"Microsoft\" instead of \"Microsoft Ireland Operations Limited\" or \"Amazon\" instead of \"Amazon EU S.a.r.l.\".\n\nIf you can't find a suitable correspondent, you can respond with \"Unknown\".\n\nThe data will be provided using an XML-like format for clarity:\n\nImportant constraints:\n- Prefer an exact or normalized match from \u003cexample_correspondents\u003e where possible.\n- Never return a name that appears in \u003cblacklisted_correspondents\u003e.\n\n\u003cexample_correspondents\u003e\nVendor\n\u003c/example_correspondents\u003e\n\n\u003cblacklisted_correspondents\u003e\nBlocked synthetic sender\n\u003c/blacklisted_correspondents\u003e\n\n\u003ctitle\u003e\nGenerated synthetic invoice\n\u003c/title\u003e\n\n\u003ccontent\u003e\nSYNTHETIC-DOC-001. Vendor issued invoice SYN-001 on 2026-09-01 for 42.00 USD. This is synthetic benchmark data, not a real customer document.\n\u003c/content\u003e\n\nThe content is likely in English.\n",
+      "response": "Vendor"
+    },
+    {
+      "prompt": "I will provide you with the content and the title of a document.\nYour task is to select the most appropriate document type for the document from the list of available document types I will provide.\nOnly select a document type from the provided list. Respond only with the selected document type name, without any additional information.\nIf none of the available document types fit the document, respond with an empty string.\nThe content is likely in English.\n\nThe data will be provided using an XML-like format for clarity:\n\n\u003cavailable_document_types\u003e\nInvoice\n\u003c/available_document_types\u003e\n\n\u003ctitle\u003e\nGenerated synthetic invoice\n\u003c/title\u003e\n\n\u003ccontent\u003e\nSYNTHETIC-DOC-001. Vendor issued invoice SYN-001 on 2026-09-01 for 42.00 USD. This is synthetic benchmark data, not a real customer document.\n\u003c/content\u003e\n\nPlease select the single most appropriate English document type from the list above that best categorizes this document.\nBe selective and only choose a document type if it clearly matches the document's nature (e.g., Invoice, Contract, Receipt, Letter, etc.).\n",
+      "response": "Invoice"
+    },
+    {
+      "prompt": "I will provide you with the content of a document. Your task is to find the date when the document was created.\nRespond only with the date in YYYY-MM-DD format, without any additional information.\nIf no day was found, use the first day of the month. If no month was found, use January. If no date was found at all, answer with today's date.\nThe content is likely in English. Today's date is 2026-09-13.\n\nThe data will be provided using an XML-like format for clarity:\n\n\u003ccontent\u003e\nSYNTHETIC-DOC-001. Vendor issued invoice SYN-001 on 2026-09-01 for 42.00 USD. This is synthetic benchmark data, not a real customer document.\n\u003c/content\u003e\n",
+      "response": "2026-09-01"
+    }
+  ],
+  "classification": "real orchestration with fake model responses; not live quality, billed tokens or money",
+  "elapsedNs": 146128,
+  "error": "",
+  "finishedAt": "2026-09-13T20:27:08.540127921Z",
+  "promptUtf8Bytes": 4986,
+  "providerCalls": 0,
+  "providerSpendUsd": 0,
+  "startedAt": "2026-09-13T20:27:08.539980369Z",
+  "suggestion": {
+    "id": 1,
+    "original_document": {
+      "id": 1,
+      "title": "Original synthetic invoice",
+      "content": "SYNTHETIC-DOC-001. Vendor issued invoice SYN-001 on 2026-09-01 for 42.00 USD. This is synthetic benchmark data, not a real customer document.",
+      "tags": [
+        "invoice"
+      ],
+      "correspondent": "",
+      "created_date": "2026-09-01",
+      "original_file_name": "",
+      "document_type_name": "Invoice",
+      "custom_fields": null
+    },
+    "suggested_title": "Generated synthetic invoice",
+    "suggested_tags": [
+      "invoice"
+    ],
+    "suggested_correspondent": "Vendor",
+    "suggested_created_date": "2026-09-01",
+    "suggested_document_type": "Invoice",
+    "remove_tags": [
+      "paperless-gpt",
+      "paperless-gpt-auto"
+    ],
+    "custom_fields_enable": false
+  }
+}

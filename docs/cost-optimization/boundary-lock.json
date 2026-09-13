@@ -1,0 +1,34 @@
+{
+  "frozenAt": "2026-09-13T20:30:19.759165+00:00",
+  "expectedCalls": {
+    "opt-out": 5,
+    "title-only": 1,
+    "three-fields": 3,
+    "custom-fields": 6,
+    "empty-tags": 5,
+    "empty-correspondents": 5,
+    "empty-document-types": 4,
+    "edited-tag-template": 5,
+    "token-limit": 5,
+    "malformed-json": 6,
+    "missing-field": 6,
+    "null-tags": 6,
+    "extra-field": 6,
+    "unknown-document-type": 6,
+    "unknown-tag": 6,
+    "invalid-date": 6,
+    "blacklisted-correspondent": 6,
+    "provider-error": 6,
+    "fallback-error": 3,
+    "empty-choices": 6,
+    "new-tags": 2,
+    "empty-tags-response": 2,
+    "normalized-document-type": 2
+  },
+  "files": {
+    "app/metadata_grouping_test.go": "821461879ab9a26a9c05c3c10a745542d8ea642cb793cb825a2510c176e6599f",
+    "app/finops_pair_test.go": "f0071db8f735deb92748703442b52344dc9bf8cd75799b872552e41c49461b58",
+    "app/metadata_grouping.go": "f0246df0ce62126e01271691ede9aee0297e82f85d208096631b6bbcc89ba1fc",
+    "app/app_llm.go": "8c6575e12ae03c9eb2934dfea36ffbb45f973a098126a9dc83f1aec1689d42ef"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "frozenAt": "2026-09-13T20:28:02.080902+00:00",
+  "files": {
+    "app/app_llm.go": "8c6575e12ae03c9eb2934dfea36ffbb45f973a098126a9dc83f1aec1689d42ef",
+    "app/metadata_grouping.go": "f0246df0ce62126e01271691ede9aee0297e82f85d208096631b6bbcc89ba1fc",
+    "app/finops_pair_test.go": "f0071db8f735deb92748703442b52344dc9bf8cd75799b872552e41c49461b58"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "frozenAt": "2026-09-13T20:25:06.665166+00:00",
+  "verifiedUpstreamFiles": 72,
+  "sourceCheckNote": "Git symlink CLAUDE.md hashes link target text rather than dereferenced AGENTS.md",
+  "runtimeImage": "golang@sha256:d9132cce84391efab786495288756d60e1da215b1f94e87860aeefc3d4c45b6d",
+  "files": {
+    "acceptance.json": "355fb7844f50e00e58b1ac04551088ef9a0a995d0dc8793d65cb238f4e528f04",
+    "app/finops_pair_test.go": "f0071db8f735deb92748703442b52344dc9bf8cd75799b872552e41c49461b58",
+    "app/app_llm.go": "9f6753145d96e331ec5b787a0366f39f856d565ce04604ed551f64d5d9f60184",
+    "app/go.mod": "b5f9ec95c120c28f08d832129419ec0818519742b6fae594d86a619c7941994a",
+    "app/go.sum": "b4ffae1edbd1d44537983f282c50f72648a92878d2869fdf72a879e54cc60834"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "recordedAt": "2026-09-13T20:33:40.256116+00:00",
+  "classification": "Measured fake-provider application behavior; no live quality or financial savings",
+  "decision": "keep-local-experimental",
+  "sameSuggestion": true,
+  "applicationCalls": {
+    "baseline": 5,
+    "candidate": 2,
+    "reductionFraction": 0.6
+  },
+  "promptUtf8Bytes": {
+    "baseline": 4986,
+    "candidate": 2347,
+    "reductionFraction": 0.5292819895707983
+  },
+  "boundaryCasesPassed": 23,
+  "fallback": {
+    "successfulBaselineTailTotalCalls": 6,
+    "overheadCallsVersusBaseline": 1,
+    "failureRate": null,
+    "expectedApplicationCallsFormula": "2*(1-f) + 6*f = 2 + 4*f; f is the unknown grouped-failure fraction, assuming successful title and successful fallback",
+    "breakEvenFailureFractionForCallCountOnly": 0.75
+  },
+  "providerCalls": 0,
+  "providerSpendUsd": 0,
+  "attemptedUnitCostUsd": null,
+  "acceptedUnitCostUsd": null,
+  "acceptedLiveOutcomes": null,
+  "providerTokens": null,
+  "liveLatency": null,
+  "localFakeLatencyNs": {
+    "baseline": 146128,
+    "candidate": 639562,
+    "interpretation": "One sample per arm; not a latency comparison"
+  },
+  "limitations": [
+    "One short synthetic document in first pair",
+    "Canned replies control output quality",
+    "No provider wrapper or HTTP/Paperless integration in pair",
+    "Prompt bytes are not tokens, cache credits or charges",
+    "Opt-in is disabled by default; token-limited and edited-template configurations excluded"
+  ]
+}

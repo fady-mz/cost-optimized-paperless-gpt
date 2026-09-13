@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "72ddde765709544823a0f5452575a070fdaac3b4",
+  "objective": "Implement and measure one opt-in title-first metadata grouping change against a real application baseline with synthetic provider responses.",
+  "authorization": "User explicitly requested continuation after updating Docker and approved downloading Go. This is a new bounded scope after the closed source assessment, not a retry of its exhausted setup campaign.",
+  "hypothesis": "Eligible five-field metadata generation can use two application LLM calls rather than five while preserving controlled outputs and existing behavior outside eligibility.",
+  "change": "Local opt-in grouped generation for tags, correspondent, document type and created date after title; retain existing path for excluded configurations and bounded fallback.",
+  "eligibility": [
+    "Opt-in enabled",
+    "All five standard fields enabled",
+    "Custom generation disabled",
+    "Loaded standard templates match locked defaults",
+    "Nonempty tag, correspondent and document-type candidates",
+    "Token limiting disabled in initial implementation; token-limited configurations retain baseline"
+  ],
+  "workload": {
+    "firstPair": "One synthetic invoice; baseline five-standard path first, then same fixture candidate; no larger matrix until pair complete",
+    "fixture": {
+      "id": 1,
+      "title": "Original synthetic invoice",
+      "content": "SYNTHETIC-DOC-001. Vendor issued invoice SYN-001 on 2026-09-01 for 42.00 USD. This is synthetic benchmark data, not a real customer document.",
+      "tags": [
+        "invoice"
+      ],
+      "documentType": "Invoice",
+      "createdDate": "2026-09-01"
+    },
+    "cannedOutputs": {
+      "title": "Generated synthetic invoice",
+      "tags": [
+        "invoice"
+      ],
+      "correspondent": "Vendor",
+      "documentType": "Invoice",
+      "createdDate": "2026-09-01"
+    },
+    "boundaries": [
+      "Opt-in disabled",
+      "One standard field",
+      "Three standard fields",
+      "Custom enabled",
+      "Missing candidate lists",
+      "Edited loaded template",
+      "Token limit enabled",
+      "Malformed or incomplete grouped response",
+      "Unknown grouped allowed value",
+      "Grouped provider error",
+      "Fallback provider error"
+    ]
+  },
+  "qualityGuardrails": [
+    "Baseline and candidate full DocumentSuggestion must match frozen expected fixture fields",
+    "Generated title must reach grouped prompt",
+    "No application-level grouped retries; one failed grouped attempt plus four baseline tail calls gives six total, or abort on baseline error",
+    "All excluded configurations preserve baseline outputs and call structure",
+    "Strict grouped response validation; no silently accepted missing fields",
+    "Record all prompts, responses and errors; fake provider success is not live quality",
+    "Keep same source and harness hash per comparison; raw results immutable"
+  ],
+  "measurement": {
+    "applicationCalls": {
+      "baseline": 5,
+      "candidate": 2,
+      "failedGroupWithSuccessfulFallback": 6
+    },
+    "promptMetric": "UTF-8 bytes, not billable tokens",
+    "providerCalls": 0,
+    "providerSpendUsd": 0,
+    "liveAcceptance": null,
+    "unitCost": null,
+    "latency": "Local fake-provider elapsed time only; not service performance"
+  },
+  "economicRationale": "At unchanged acceptance whole-workflow benefit = metadata cost share * metadata-stage reduction - added runtime and amortized engineering burden. All money inputs unknown; no savings claim from request counts.",
+  "decisionRules": {
+    "keep": "First pair meets output/call gates, boundary tests pass and narrow opt-in implementation remains maintainable; keep locally experimental only",
+    "reject": "Executed comparison violates unchanged acceptance or meaningful benefits disappear",
+    "park": "Execution prerequisite or recovery limit prevents a supported code decision"
+  },
+  "limits": {
+    "activeOwnerMinutes": 90,
+    "repairAttempts": 2,
+    "repairMinutes": 30,
+    "providerSpendUsd": 0
+  },
+  "outOfScope": [
+    "Paid calls",
+    "Publication",
+    "OCR redesign",
+    "Live model accuracy claims",
+    "UI changes",
+    "Automatic follow-up campaign after this experiment"
+  ]
+}

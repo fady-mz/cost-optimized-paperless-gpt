@@ -1,3 +1,51 @@
+# Cost Optimized Paperless GPT
+
+An experimental, opt-in cost-efficiency fork of [Paperless-GPT](https://github.com/icereed/paperless-gpt). It keeps title generation first, then groups tags, correspondent, document type and created date into one request for eligible configurations. The feature is **disabled by default**.
+
+## Measured request reduction
+
+The historical controlled benchmark used **one synthetic invoice with canned model responses**, exercising the real application orchestration and parsing functions at upstream commit `72ddde765709544823a0f5452575a070fdaac3b4`.
+
+| Measure | Baseline | Grouped candidate | Reduction |
+| --- | ---: | ---: | ---: |
+| Application LLM calls | 5 | 2 | **60%** |
+| Total prompt UTF-8 bytes | 4,986 | 2,347 | **52.93% (about 53%)** |
+
+Both arms returned identical complete metadata suggestions for that fixture. These are request-count and prompt-byte measurements, **not measured token, model-quality or dollar savings**. See the [benchmark evidence and methodology](docs/cost-optimization/README.md).
+
+## Modeled overall savings: 10–20%
+
+**10–20% is an illustrative planning scenario, not an observed saving or a forecast.** It assumes metadata represents 50% of the whole-document bill and metadata spend falls 20–40%, with unchanged acceptance:
+
+`50% metadata cost share × 20–40% metadata cost reduction = 10–20% overall reduction`
+
+Neither financial input has been measured here. OCR cost, caching, output tokens, rejected outputs, retries and engineering effort can erase the benefit. A failed grouped request followed by successful fallback uses **6 application calls instead of 5**. Savings can be zero or negative.
+
+## Enable the local-build feature
+
+Clone this fork and build its source; the upstream image does not include this fork's change:
+
+```sh
+git clone https://github.com/fady-mz/cost-optimized-paperless-gpt.git
+cd cost-optimized-paperless-gpt
+docker build -t cost-optimized-paperless-gpt .
+```
+
+Configure the usual Paperless-ngx connection and LLM provider settings described below. Add these variables to that deployment's environment:
+
+```text
+LLM_METADATA_GROUPING=true
+TOKEN_LIMIT=0
+```
+
+Select all five standard metadata fields and disable custom-field generation for the request. Grouping also requires unchanged loaded default prompts and nonempty candidate lists. Other configurations retain individual requests. The current upstream correspondent limit and system-tag filtering are preserved. Restore `LLM_METADATA_GROUPING=false` to disable grouping.
+
+The adapted change and regression tests are on `feat/title-first-metadata-grouping`; fork branding and historical benchmark artifacts are kept on `main`. No live provider benchmark or production-readiness claim is made. This fork retains the upstream MIT license and attribution.
+
+---
+
+## Upstream project documentation
+
 # paperless-gpt
 
 [![License](https://img.shields.io/github/license/icereed/paperless-gpt)](LICENSE)

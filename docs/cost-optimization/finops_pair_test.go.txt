@@ -1,0 +1,114 @@
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/stretchr/testify/require"
+	"github.com/tmc/langchaingo/llms"
+)
+
+type recordedReply struct {
+	Prompt   string `json:"prompt"`
+	Response string `json:"response"`
+}
+
+type pairProvider struct {
+	replies []string
+	calls   []recordedReply
+}
+
+func (p *pairProvider) Call(context.Context, string, ...llms.CallOption) (string, error) {
+	return "", fmt.Errorf("unexpected string API; metadata uses GenerateContent")
+}
+
+func (p *pairProvider) GenerateContent(_ context.Context, messages []llms.MessageContent, _ ...llms.CallOption) (*llms.ContentResponse, error) {
+	var prompt strings.Builder
+	for _, message := range messages {
+		for _, part := range message.Parts {
+			text, ok := part.(llms.TextContent)
+			if !ok {
+				return nil, fmt.Errorf("non-text metadata input")
+			}
+			prompt.WriteString(text.Text)
+		}
+	}
+	index := len(p.calls)
+	if index >= len(p.replies) {
+		p.calls = append(p.calls, recordedReply{Prompt: prompt.String(), Response: "UNEXPECTED EXTRA CALL"})
+		return nil, fmt.Errorf("unexpected extra model call")
+	}
+	reply := p.replies[index]
+	p.calls = append(p.calls, recordedReply{Prompt: prompt.String(), Response: reply})
+	return &llms.ContentResponse{Choices: []*llms.ContentChoice{{Content: reply}}}, nil
+}
+
+func TestFinopsPairPreservesInvoiceMetadata(t *testing.T) {
+	arm := os.Getenv("FINOPS_ARM")
+	if arm == "" {
+		t.Skip("Portfolio recorder requires an explicit arm and immutable output path")
+	}
+	require.Contains(t, []string{"baseline", "candidate"}, arm)
+	output := os.Getenv("FINOPS_RESULT_FILE")
+	require.NotEmpty(t, output)
+	root, err := os.Getwd()
+	require.NoError(t, err)
+	planBytes, err := os.ReadFile(filepath.Join(root, "..", "acceptance.json"))
+	require.NoError(t, err)
+	var plan struct {
+		Workload struct {
+			Fixture struct {
+				ID                                        int
+				Title, Content, DocumentType, CreatedDate string
+				Tags                                      []string
+			}
+		}
+	}
+	require.NoError(t, json.Unmarshal(planBytes, &plan))
+	fixture := plan.Workload.Fixture
+	doc := Document{ID: fixture.ID, Title: fixture.Title, Content: fixture.Content, Tags: fixture.Tags, DocumentTypeName: fixture.DocumentType, CreatedDate: fixture.CreatedDate}
+	t.Chdir(t.TempDir())
+	require.NoError(t, os.CopyFS("default_prompts", os.DirFS(filepath.Join(root, "default_prompts"))))
+	require.NoError(t, loadTemplates())
+	t.Setenv("LLM_LANGUAGE", "English")
+	t.Setenv("LLM_METADATA_GROUPING", fmt.Sprint(arm == "candidate"))
+	tokenLimit = 0
+	manualTag, autoTag, autoOcrTag = "paperless-gpt", "paperless-gpt-auto", "paperless-gpt-ocr-auto"
+	createNewTags = false
+	correspondentBlackList = []string{"Blocked synthetic sender"}
+	settings = Settings{}
+	provider := &pairProvider{replies: []string{"Generated synthetic invoice", "invoice", "Vendor", "Invoice", "2026-09-01"}}
+	if arm == "candidate" {
+		provider.replies = []string{"Generated synthetic invoice", `{"tags":["invoice"],"correspondent":"Vendor","document_type":"Invoice","created_date":"2026-09-01"}`}
+	}
+	app := &App{LLM: provider, Client: &mockPaperlessClient{}}
+	request := GenerateSuggestionsRequest{GenerateTitles: true, GenerateTags: true, GenerateCorrespondents: true, GenerateDocumentTypes: true, GenerateCreatedDate: true}
+	candidates := suggestionGenerationContext{availableTagNames: []string{"invoice", "unrelated", manualTag}, availableCorrespondentNames: []string{"Vendor"}, availableDocumentTypeNames: []string{"Invoice"}}
+	started := time.Now().UTC()
+	suggestion, runErr := app.generateSingleDocumentSuggestion(context.Background(), request, doc, candidates, log.WithField("experiment", arm))
+	elapsed := time.Since(started)
+	promptBytes := 0
+	for _, call := range provider.calls {
+		promptBytes += len([]byte(call.Prompt))
+	}
+	errorText := ""
+	if runErr != nil {
+		errorText = runErr.Error()
+	}
+	record := map[string]interface{}{"arm": arm, "startedAt": started, "finishedAt": time.Now().UTC(), "elapsedNs": elapsed.Nanoseconds(), "applicationCalls": len(provider.calls), "promptUtf8Bytes": promptBytes, "calls": provider.calls, "suggestion": suggestion, "error": errorText, "providerCalls": 0, "providerSpendUsd": 0, "acceptedLiveOutcomes": nil, "classification": "real orchestration with fake model responses; not live quality, billed tokens or money"}
+	encoded, err := json.MarshalIndent(record, "", "  ")
+	require.NoError(t, err)
+	f, err := os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
+	require.NoError(t, err, "Evidence files must not be overwritten")
+	_, err = f.Write(encoded)
+	require.NoError(t, err)
+	require.NoError(t, f.Close())
+	require.NoError(t, runErr)
+	require.Equal(t, DocumentSuggestion{ID: doc.ID, OriginalDocument: doc, SuggestedTitle: "Generated synthetic invoice", SuggestedTags: []string{"invoice"}, SuggestedCorrespondent: "Vendor", SuggestedDocumentType: "Invoice", SuggestedCreatedDate: "2026-09-01", RemoveTags: []string{manualTag, autoTag}}, suggestion)
+}
